@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>휴메타셀 보유 세포주 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        header {
+            background-color: #0073e6;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .search-bar {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background-color: #005bb5;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result-item {
+            background: white;
+            border: 1px solid #f7f9fc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .result-item h2 {
+            color: #0073e6;
+        }
+        .result-item table {
+            width: 60%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin: 0 auto;
+        }
+        .result-item table th, .result-item table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .result-item table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>휴메타셀 보유 세포주 정보</h1>
+    </header>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="세포주 이름을 검색하세요...">
+            <button onclick="performSearch()">검색</button>
+        </div>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        const data = [
+            {
+                "Name": "NIH 3T3 human CD40L/Human BAFF",
+                "Biosafety": "BSL 2",
+                "Product Category": "Animal cells",
+                "Product type": "Cell model",
+                "Organism": "Mouse",
+                "Cell type": "Fibroblast-like",
+                "morphology": "",
+                "Tissue": "",
+                "Disease": "",
+                "Insert gene": "",
+                "Image": ""
+            },
+            {
+                "Name": "NK-92",
+                "Biosafety": "BSL 2",
+                "Product Category": "Human cells",
+                "Product type": "Natural Killer cell",
+                "Organism": "Human",
+                "Cell type": "lymphoblast",
+                "morphology": "lymphoblast",
+                "Tissue": "Peripheral blood",
+                "Disease": "Malignant Non-Hodgkin's Lymphoma",
+                "Insert gene": "N/A",
+                "Image": "https://static.wixstatic.com/media/4c988b_af94209c61244b04b5190252d3746dd1~mv2.png"
+            },
+            {
+                "Name": "Bone Marrow-Derived Mesenchymal Stem Cells; Normal, Human",
+                "Biosafety": "BSL 1",
+                "Product Category": "Human cells",
+                "Product type": "",
+                "Organism": "Human",
+                "Cell type": "Mesenchymal stem cell",
+                "morphology": "spindle shaped, fibroblast-like",
+                "Tissue": "Bone",
+                "Disease": "Normal",
+                "Insert gene": "",
+                "Image": ""
+            },
+            {
+                "Name": "Neural Progenitor Cells Derived from ATCC-BYS012 Normal; Human",
+                "Biosafety": "BSL 2",
+                "Product Category": "Human cells",
+                "Product type": "Cell model",
+                "Organism": "",
+                "Cell type": "Neural progenitor cell",
+                "morphology": "short spindle shape",
+                "Tissue": "Bone; Marrow",
+                "Disease": "Normal",
+                "Insert gene": "",
+                "Image": "https://static.wixstatic.com/media/4c988b_b8090fd491f442c0b5a12be7e01eca7f~mv2.png"
+            }
+        ];
+
+        function performSearch() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            const filteredResults = data.filter(item =>
+                item.Name.toLowerCase().includes(input) || 
+                item.Disease.toLowerCase().includes(input)
+            );
+
+            if (filteredResults.length === 0) {
+                resultsContainer.innerHTML = `<p class="no-results">"${input}"에 대한 결과가 없습니다.</p>`;
+            } else {
+                filteredResults.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.classList.add('result-item');
+                    let tableRows = '';
+
+                    for (const key in item) {
+                        if (key === 'Image' && item[key]) {
+                            tableRows += `
+                                <tr>
+                                    <th>${key}</th>
+                                    <td><img src="${item[key]}" alt="${item.Name}"></td>
+                                </tr>
+                            `;
+                        } else {
+                            tableRows += `<tr><th>${key}</th><td>${item[key]}</td></tr>`;
+                        }
+                    }
+
+                    resultDiv.innerHTML = `
+                        <h2>${item.Name}</h2>
+                        <table>${tableRows}</table>
+                    `;
+                    resultsContainer.appendChild(resultDiv);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
